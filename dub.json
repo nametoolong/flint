@@ -1,0 +1,8 @@
+{
+	"name": "flint",
+	"description": "A weird TCP tunneling tool",
+	"license": "MPL",
+	"dependencies": {
+		"botan": "~>1.12.8"
+	}
+}

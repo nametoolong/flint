@@ -1,0 +1,19 @@
+type=server
+
+rotors=II VI V
+rings=1 16 7
+reflector=B
+
+listen=0.0.0.0
+port=3967
+remote=127.0.0.1
+rport=1080
+timeout=20
+idletimeout=10
+
+keyfile=privkey.key
+powlife=30
+powleadingzero=2
+powfirstbytemax=32
+powsalt=what
+maxdisconnectdelay=1000
