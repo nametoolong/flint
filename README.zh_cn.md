@@ -2,9 +2,9 @@ flint
 ======
 [English](README.md)
 
-一个使用 enigma 加密的 TCP 代理。依赖于 [botan](https://github.com/etcimon/botan).
+一个使用 enigma 加密的**实验性** TCP 代理。依赖于 [botan](https://github.com/etcimon/botan).
 
-Enigma 机 **不是** 一种安全的加密方式，建议使用 [stunnel](https://www.stunnel.org/index.html) 保证保密性。
+Enigma 机**不是**一种安全的加密方式，建议使用 [stunnel](https://www.stunnel.org/index.html) 保证保密性。
 
 构建
 ------
