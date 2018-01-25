@@ -42,4 +42,4 @@ After handshake, the following message structure is used.
 ```
 [HMAC][length authentication tag][length][payload]
 ```
-The message will be encoded using base24 and then encrypted using an Enigma machine.
+The message will be encoded using base24 and then encrypted using an Enigma machine. Authenticate then encrypt is a bad idea but I have no idea how to implement encrypt-then-authenticate.
