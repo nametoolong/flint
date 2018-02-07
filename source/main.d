@@ -59,7 +59,7 @@ const uint LEN_AUTH_KEY_SIZE = 16;
 const uint RSA_DATA_LENGTH = 256;
 const uint ENCODED_RSA_DATA_LENGTH = RSA_DATA_LENGTH * 2;
 
-const size_t HANDSHAKE_MESSAGE_PADDING_LENGTH_MAX = 840;
+const size_t HANDSHAKE_MESSAGE_PADDING_LENGTH_MAX = 420;
 
 const size_t HANDSHAKE_INBUF_SIZE = 4096;
 const size_t SERVER_INBUF_SIZE = 8192;
@@ -738,7 +738,7 @@ auto handshake(ref PublicKey pubkey, string pow)
 	char[] buf = new char[HANDSHAKE_INBUF_SIZE];
 	ptrdiff_t len;
 
-	string first_msg = add_spaces(pow ~ random_cased(cast(string)random_length_of_random_letters(640)));
+	string first_msg = add_spaces(pow ~ random_cased(cast(string)random_length_of_random_letters(HANDSHAKE_MESSAGE_PADDING_LENGTH_MAX)));
 
 	len = client_socket.send(first_msg);
 
@@ -794,7 +794,7 @@ auto handshake(ref PublicKey pubkey, string pow)
 
 	PKEncryptorEME encryptor = new PKEncryptorEME(pubkey, "EME1(SHA-256)");
 
-	ubyte[] encrypted_keys = encryptor.encrypt(keys.ptr, keys.length, cryptoRng)[] ~ random_length_of_random_data(224);
+	ubyte[] encrypted_keys = encryptor.encrypt(keys.ptr, keys.length, cryptoRng)[] ~ random_length_of_random_data(HANDSHAKE_MESSAGE_PADDING_LENGTH_MAX/2);
 
 	string msg = add_spaces(random_cased(add_random_letters(enbase(encrypted_keys, base24_alphabet), unused_letters)));
 
@@ -1567,6 +1567,16 @@ unittest
 	assertThrown!Error(parseArgs([".//flint", "managedport=-1"], "wtf"));
 }
 
+auto checkKeyLength(T)(T key) if (is(T : PublicKey))
+{
+	if (RSA_DATA_LENGTH * 8 - 1 != key.maxInputBits())
+	{
+		fatal("2048-bit RSA key is required");
+	}
+
+	return key;
+}
+
 int main(string[] args)
 {
 	string config_file;
@@ -1615,7 +1625,7 @@ int main(string[] args)
 	{
 		case "client":
 			info("Reading " ~ config.getString("keyfile"));
-			auto pubkey = loadKey(config.getString("keyfile"));
+			auto pubkey = checkKeyLength(loadKey(config.getString("keyfile")));
 
 			string pow = doProofOfWork();
 
@@ -1629,7 +1639,7 @@ int main(string[] args)
 			break;
 		case "server":
 			info("Reading " ~ config.getString("keyfile"));
-			globalDecryptor = new RSAOAEPDecryptor(loadKey(config.getString("keyfile"), cryptoRng), cryptoRng);
+			globalDecryptor = new RSAOAEPDecryptor(checkKeyLength(loadKey(config.getString("keyfile"), cryptoRng)), cryptoRng);
 			launchServer();
 
 			break;
