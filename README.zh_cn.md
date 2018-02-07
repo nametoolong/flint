@@ -6,6 +6,8 @@ flint
 
 Enigma 机**不是**一种安全的加密方式，建议使用 [stunnel](https://www.stunnel.org/index.html) 保证保密性。
 
+Flint 的协议握手要求一次收到一条完整的握手消息，这是一个存在问题的行为，因此在一些网络条件下可能无法连接。
+
 构建
 ------
 ```

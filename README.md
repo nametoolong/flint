@@ -6,6 +6,8 @@ Simple **experimental** TCP proxy using Enigma rotor cipher applied to base24 en
 
 Flint provides strong integrity and **really weak confidentiality**, as Enigma is a WWII cipher. It is recommended to use [stunnel](https://www.stunnel.org/index.html) for some true confidentiality.
 
+Flint might reject to connect due to its broken handshake behavior that a handshake message must be received intact at one time.
+
 Building
 ------
 ```
@@ -37,7 +39,7 @@ On client side, `listen` and `port` specify where to listen for application conn
 
 How does it work?
 ------
-Flint multiplexes application TCP connections in one TCP connection. When started, the client does a proof of work and then connects to the server. The first message sent over the connection is the 'hello' message from client to server, which is a 32-byte proof of work string followed by some random alphabetical data. The server checks the proof of work and replies with a 'cookie' message, which is a 8-byte cookie concatenated with a 26-byte alphabet, followed by some random alphabetical data. The client then replies with a 'key' message, which is a base24 encoded RSA cipher string containing crypto keys, mixed with the two letters unused in the base24 process and followed by some random alphabetical data again. After the server's successful decryption, the handshake is finished. The three handshake messages have no length field and flint clearly has broken behavior that it is required to receive a handshake message intact at one time. Spaces are always ignored in flint protocol, so an arbitrary amount of spaces could be added into the message being sent over the wire, making flint data stream look more like plain text and enables flint to be a replacement of [bananaphone](https://github.com/david415/bananaphone).
+Flint multiplexes application TCP connections in one TCP connection. When started, the client does a proof of work and then connects to the server. The first message sent over the connection is the 'hello' message from client to server, which is a 32-byte proof of work string followed by some random alphabetical data. The server checks the proof of work and replies with a 'cookie' message, which is a 8-byte cookie concatenated with a 26-byte alphabet, followed by some random alphabetical data. The client then replies with a 'key' message, which is a base24 encoded RSA cipher string containing crypto keys, mixed with the two letters unused in the base24 process and followed by some random alphabetical data again. After the server's successful decryption, the handshake is finished. The three handshake messages have no length field and flint clearly has broken behavior that a handshake message must be received intact at one time. Spaces are always ignored in flint protocol, so an arbitrary amount of spaces could be added into the message being sent over the wire, making flint data stream look more like plain text and enables flint to be a replacement of [bananaphone](https://github.com/david415/bananaphone).
 
 After handshake, the following message structure is used.
 ```
