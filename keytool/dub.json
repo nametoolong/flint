@@ -3,6 +3,6 @@
     "description": "A tool for public key generation",
     "license": "WTFPL",
     "dependencies": {
-            "botan": "~>1.11.14"
+            "botan": "~>1.12.8"
     }
 }
