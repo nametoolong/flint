@@ -34,7 +34,7 @@ dub --build=release
 `reflector` 是 Enigma 机中反射器的设置。  
 目前只支持使用 3 个转子。参考 [enigma.d](source/enigma.d) 来设置这些值。它们并不重要，因为现在谁都可以轻易破解 Enigma 加密。如果你不明白这些是什么，从 `flint.config` 里复制这三项设置即可。
 
-客户端配置文件中的 `listen` 和 `port` 指定监听应用程序连接的地址和端口而 `remote` 和 `rport` 指定服务器地址和端口。服务端配置文件中的 `listen` 和 `port` 指定监听客户端连接的地址和端口而 `remote` 和 `rport` 指定将应用程序连接代理到的地址和端口。  
+客户端配置文件中的 `listen` 和 `port` 指定监听应用程序连接的地址和端口； `remote` 和 `rport` 指定服务器地址和端口。服务端配置文件中的 `listen` 和 `port` 指定监听客户端连接的地址和端口； `remote` 和 `rport` 指定将应用程序连接代理到的地址和端口。  
 `timeout` 指定客户端或服务端对另一方的超时时间，不影响应用程序连接。  
 `idletimeout` 指定断开客户端连接需要的空闲时间，只影响服务端。
 
@@ -43,3 +43,7 @@ dub --build=release
 `powfirstbytemax` 指定客户端工作量证明中首个非零字节的最大值。  
 `powsalt` 是工作量证明在哈希中使用的盐值。  
 `maxdisconnectdelay` 是在连接断开前随机延时的最大值。
+
+工作原理
+------
+Flint 和 [bananaphone](https://github.com/david415/bananaphone) 基于类似的想法。因为使用 Enigma 机加密所有流量。所以 flint 产生的流量只含有字母和空格。
