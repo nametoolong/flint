@@ -132,11 +132,11 @@ ubyte[] random_length_of_random_data(size_t upper_bound)
 	return random_data(uniform(0, upper_bound));
 }
 
-ubyte[] generate_alphabet()
+immutable(ubyte[]) generate_alphabet()
 {
 	ubyte[] _in = cast(ubyte[])(ALPHABET.dup);
 	randomShuffle(_in);
-	return _in;
+	return assumeUnique(_in);
 }
 
 ubyte[] random_letters(size_t length)
@@ -785,12 +785,13 @@ auto handshake(ref PublicKey pubkey, string pow)
 	string rotors = generate_random_rotors();
 	immutable ubyte[] hmac_key = generate_hmac_key();
 	immutable ubyte[] len_auth_key = generate_len_auth_key();
+	immutable ubyte[] real_alphabet = generate_alphabet()[0 .. 24];
 
 	string alphabet = toUpper(r_msg[8 .. 34]);
 	string base24_alphabet = alphabet[0 .. 24];
 	string unused_letters = alphabet[24 .. 26];
 
-	immutable ubyte[] keys = cast(immutable ubyte[])cookie ~ cast(immutable ubyte[])rotors ~ hmac_key ~ len_auth_key;
+	immutable ubyte[] keys = cast(immutable ubyte[])cookie ~ cast(immutable ubyte[])rotors ~ hmac_key ~ len_auth_key ~ real_alphabet;
 
 	PKEncryptorEME encryptor = new PKEncryptorEME(pubkey, "EME1(SHA-256)");
 
@@ -815,7 +816,7 @@ auto handshake(ref PublicKey pubkey, string pow)
 
 	info("Connection established");
 
-	return tuple(rotors, hmac_key, base24_alphabet, len_auth_key);
+	return tuple(rotors, hmac_key, cast(string)real_alphabet, len_auth_key);
 }
 
 void clientMain(string rotors, immutable ubyte[] hmac_key, string base24_alphabet, immutable ubyte[] len_auth_key)
@@ -1071,7 +1072,7 @@ void serverConnectionHandler(Socket sock)
 	}
 
 	ubyte[] cookie = random_letters(8);
-	ubyte[] alphabet = generate_alphabet();
+	immutable ubyte[] alphabet = generate_alphabet();
 
 	string base24_alphabet = cast(string)alphabet[0 .. 24];
 	string unused_letters = cast(string)alphabet[24 .. 26];
@@ -1115,6 +1116,11 @@ void serverConnectionHandler(Socket sock)
 	string rotors = cast(string)decrypted_msg[8 .. 11];
 	immutable ubyte[] hmac_key = decrypted_msg[11 .. 11 + HMAC_BLOCK_SIZE];
 	immutable ubyte[] len_auth_key = decrypted_msg[11 + HMAC_BLOCK_SIZE .. 11 + HMAC_BLOCK_SIZE + LEN_AUTH_KEY_SIZE];
+
+	if (decrypted_msg.length >= 11 + HMAC_BLOCK_SIZE + LEN_AUTH_KEY_SIZE + 24)
+	{
+		base24_alphabet = cast(string)decrypted_msg[11 + HMAC_BLOCK_SIZE + LEN_AUTH_KEY_SIZE .. 11 + HMAC_BLOCK_SIZE + LEN_AUTH_KEY_SIZE + 24];
+	}
 
 	delete cookie;
 
