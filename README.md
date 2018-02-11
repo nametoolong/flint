@@ -4,7 +4,7 @@ flint
 
 Simple **experimental** TCP proxy using Enigma rotor cipher applied to base24 encoded data, written in D. The only dependency is [botan](https://github.com/etcimon/botan). The current code is **enigmatic** so use at your own risk.
 
-Flint is not something that helps you get past a firewall, although it might help. It is something that helps you when an uncanny DPI box tries to learn what you are doing despite the obfuscation technique you used to get past.
+Flint is not something that helps you get past a firewall, although it might help. It is something that helps you when an uncanny DPI box tries to learn what you are doing despite the obfuscation technique you used to get past. You can also use flint for traversal through some proxies that only allow text-based protocols.
 
 Flint provides strong integrity and **really weak confidentiality**, as Enigma is a WWII cipher. It is recommended to use [stunnel](https://www.stunnel.org/index.html) for some true confidentiality.
 
