@@ -8,7 +8,7 @@ Flint is not something that helps you get past a firewall, although it might hel
 
 Flint provides strong integrity and **really weak confidentiality**, as Enigma is a WWII cipher. It is recommended to use [stunnel](https://www.stunnel.org/index.html) for some true confidentiality.
 
-Flint might reject to connect due to its broken handshake behavior that a handshake message must be received intact at one time.
+Flint might reject to connect due to its broken handshake behavior that a handshake message must be received intact at a time.
 
 Building
 ------
