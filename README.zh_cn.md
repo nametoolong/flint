@@ -2,13 +2,7 @@ flint
 ======
 [English](README.md)
 
-一个使用 Enigma 加密的**实验性** TCP 代理。依赖于 [botan](https://github.com/etcimon/botan) 加密库。代码乱七八糟，在生产环境使用后果自负。
-
-Flint 不是用来帮助你穿过防火墙的，尽管它有时能帮到你，但实际上它是用来对抗某些 DPI 的。有时虽然你使用了一些混淆手段，但是这些 DPI 仍然试图绕过它们弄明白你在干什么，这时候你才需要这个项目。这个项目也可以用来穿透只允许文本协议的代理。
-
-Enigma 机**不是**一种安全的加密方式，建议使用 [stunnel](https://www.stunnel.org/index.html) 保证保密性。
-
-Flint 的协议握手要求一次收到一条完整的握手消息，这是一个存在问题的行为，因此在一些网络条件下可能无法连接。
+一个使用 Enigma 加密的 TCP 代理。依赖于 [botan](https://github.com/etcimon/botan) 加密库。
 
 构建
 ------
@@ -48,4 +42,4 @@ dub --build=release
 
 工作原理
 ------
-Flint 和 [bananaphone](https://github.com/david415/bananaphone) 基于类似的想法。因为使用 Enigma 机加密所有流量。所以 flint 产生的流量只含有字母和空格。
+Flint 和 [bananaphone](https://github.com/david415/bananaphone) 基于类似的想法。因为使用 Enigma 机加密所有流量，所以 flint 产生的流量只含有字母和空格。
