@@ -1,14 +1,10 @@
 flint
 ======
-[中文](README.zh_cn.md)
+[简体中文](README.zh_cn.md)
 
-Simple **experimental** TCP proxy using Enigma rotor cipher applied to base24 encoded data, written in D. The only dependency is [botan](https://github.com/etcimon/botan). The current code is **enigmatic** so use at your own risk.
+Flint is an experimental TCP proxy using Enigma rotor cipher. The only dependency is [botan](https://github.com/etcimon/botan).
 
-Flint is not something that helps you get past a firewall, although it might help. It is something that helps you when an uncanny DPI box tries to learn what you are doing despite the obfuscation technique you used to get past. You can also use flint for traversal through some proxies that only allow text-based protocols.
-
-Flint provides strong integrity and **really weak confidentiality**, as Enigma is a WWII cipher. It is recommended to use [stunnel](https://www.stunnel.org/index.html) for some true confidentiality.
-
-Flint might reject to connect due to its broken handshake behavior that a handshake message must be received intact at a time.
+I wrote flint to make my ~script kiddie~ pentesting life easier. It could hide from old-school rule-based corporate firewalls. It provided a secret way to access my servers in case they were under attack. And to my surprise it also worked smoothly circumventing GFW, even with the most stringent blocking in place.
 
 Building
 ------
@@ -25,15 +21,15 @@ Where are my keys?
 cd keytool
 dub --build=release
 ```
-The files `pubkey.key` and `privkey.key` will be created under the folder keytool. The server requires `privkey.key` and the client requires `pubkey.key`.
+The files `pubkey.key` and `privkey.key` will be created under the folder `keytool`. The server requires `privkey.key` and the client requires `pubkey.key`.
 
 Usage
 ------
-Use `--config=<file>` to specify a config file. Explanations go below.
+Use `--config=<file>` to specify a config file.
 
 `type` should be `client` or `server`.
 
-`rotors` and `rings` should be the settings of the first, second and third rotors. `reflector` is the type of the reflector. Only 3 rotors are supported currently. See [enigma.d](source/enigma.d) for available types. Not that they are important though, since anyone can break Enigma rotor cipher with no diffuculty. Use the values in `flint.config` if you don't know what they are.
+`rotors` and `rings` should be the settings of the first, second and third rotors. `reflector` is the type of the reflector. Only 3 rotors are supported currently. See [enigma.d](source/enigma.d) for available types. Not that they are important though, since anyone can break Enigma rotor cipher with no difficulty. Use the values in `flint.config` if you don't know what they are.
 
 On client side, `listen` and `port` specify where to listen for application connections and `remote` and `rport` specify the server address. On server side, `listen` and `port` specify where to listen for clients and `remote` and `rport` specify where to forward applications connections to. `timeout` is the timeout of client or server connections and does not affect application connections. `idletimeout` affects only the server and specifies the length of inactivity before disconnecting a client.
 
@@ -41,14 +37,4 @@ On client side, `listen` and `port` specify where to listen for application conn
 
 How does it work?
 ------
-Flint is based on the same idea behind [bananaphone](https://github.com/david415/bananaphone). In detail, Flint multiplexes application TCP connections in one TCP connection and uses Enigma rotor cipher to encrypt all application traffic, therefore creating traffic consisting of only alphabetic characters and spaces, which could be then obfuscated by another protocol obfuscator or mimicker. Flint has a lower overhead and is faster than bananaphone.
-
-Protocol
-------
-When started, the client does a proof of work and then connects to the server. The first message sent over the connection is the 'hello' message from client to server, which is a 32-byte proof of work string followed by some random alphabetical data. The server checks the proof of work and replies with a 'cookie' message, which is a 8-byte cookie concatenated with a 26-byte alphabet, followed by some random alphabetical data. The client then replies with a 'key' message, which is a base24 encoded RSA cipher string containing crypto keys, mixed with the two letters unused in the base24 process and followed by some random alphabetical data again. After the server's successful decryption, the handshake is finished. The three handshake messages have no length field and flint clearly has broken behavior that a handshake message must be received intact at one time. Spaces are always ignored in flint protocol, so an arbitrary amount of spaces could be added into the message being sent over the wire, making flint data stream look more like plain text.
-
-After handshake, the following message structure is used.
-```
-[HMAC][length authentication tag][length][payload]
-```
-The message will be encoded using base24 and then encrypted using an Enigma machine. Authenticate-then-encrypt is a bad practice but I have no idea how to implement encrypt-then-authenticate.
+Flint is based on the same idea behind [bananaphone](https://github.com/david415/bananaphone). In detail, Flint multiplexes application TCP connections in one TCP connection and uses Enigma rotor cipher to encrypt all application traffic, therefore creating traffic consisting of only alphabetic characters and spaces. Flint has a lower overhead and is much faster than bananaphone.
